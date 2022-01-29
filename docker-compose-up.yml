@@ -1,0 +1,49 @@
+version: "2.4"
+
+services:
+  db:
+    image: postgres:12-alpine3.15
+    environment:
+      - POSTGRES_NAME=django
+      - POSTGRES_USER=django
+      - POSTGRES_PASSWORD=django
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+
+  api:
+    image: localhost:5000/api:v0.5
+    ports:
+      - "8000:8000"
+    links:
+      - "db:database"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+      - registry
+
+
+  front:
+    image: localhost:5000/front:v0.5
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - frontend
+      - registry
+
+
+networks:
+  frontend:
+  backend:
+  registry:
+    external: true
+    name: docker_homework_registry

@@ -1,0 +1,15 @@
+version: "2.4"
+
+services:
+  api:
+    build: 
+      context: ./lib_catalog
+      dockerfile: Dockerfile
+    image: localhost:5000/api:v0.5
+
+
+  front:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.3task
+    image: localhost:5000/front:v0.5
